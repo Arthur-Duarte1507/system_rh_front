@@ -1,6 +1,6 @@
 {
-    "name": "system_rh_front",
-    "short_name": "system_rh_front",
+    "name": "sistema_rh",
+    "short_name": "sistema_rh",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",
