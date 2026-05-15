@@ -17,13 +17,13 @@ class DashboardColaboradorPage extends StatelessWidget {
           subtitle: 'Perfil do colaborador e mural de comunicados.',
         ),
         const SizedBox(height: 16),
-        
+
         const RhPageAssignmentBanner(
           fileHint:
               'lib/features/rh/presentation/pages/dashboard_colaborador_page.dart',
         ),
         const SizedBox(height: 16),
-        
+
         //Chamamos o nosso novo Card unificado aqui
         const _PerfilConsolidadoCard(),
       ],
@@ -33,15 +33,15 @@ class DashboardColaboradorPage extends StatelessWidget {
 
 Color gerarCorClaraAleatoria() {
   final random = Random();
-  
+
   //Criamos uma cor baseada em HSL:
   //Hue (Matiz): 0 a 360 (todas as cores do arco-íris)
   //Saturation: 0.4 a 0.8 (para não ficar nem cinza, nem berrante)
   //Lightness: 0.6 a 0.85 (GARANTE que a cor seja clara)
   return HSLColor.fromAHSL(
-    1.0, 
-    random.nextDouble() * 360, 
-    0.5 + random.nextDouble() * 0.2, 
+    1.0,
+    random.nextDouble() * 360,
+    0.5 + random.nextDouble() * 0.2,
     0.7 + random.nextDouble() * 0.15,
   ).toColor();
 }
@@ -54,10 +54,12 @@ class _PerfilConsolidadoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const String nomeColaborador = "Maria Silva"; //TODO: Substituir por variável da API
-    const String cargoColaborador = "Engenheira de Software Sênior"; //TODO: Substituir por variável da API
+    const String nomeColaborador =
+        "Maria Silva"; //TODO: Substituir por variável da API
+    const String cargoColaborador =
+        "Engenheira de Software Sênior"; //TODO: Substituir por variável da API
     Color corFundo = gerarCorClaraAleatoria();
-    
+
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(24),
@@ -76,7 +78,6 @@ class _PerfilConsolidadoCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          
           //------------------------------------------------------------------
           //PARTE SUPERIOR: FOTO, NOME E CARGO (Acima da linha divisória)
           //------------------------------------------------------------------
@@ -95,15 +96,15 @@ class _PerfilConsolidadoCard extends StatelessWidget {
                   child: Text(
                     nomeColaborador.split(' ').map((n) => n[0]).take(2).join(),
                     style: TextStyle(
-                      fontSize: 24, 
-                      fontWeight: FontWeight.bold, 
-                      color: Color(0xFF0F172A)
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF0F172A),
                     ),
                   ),
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               //Textos: Nome e Cargo
               const Expanded(
                 child: Column(
@@ -112,18 +113,18 @@ class _PerfilConsolidadoCard extends StatelessWidget {
                     Text(
                       nomeColaborador,
                       style: TextStyle(
-                        fontSize: 24, 
-                        fontWeight: FontWeight.bold, 
-                        color: Color(0xFF0F172A)
+                        fontSize: 24,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xFF0F172A),
                       ),
                     ),
                     Text(
                       cargoColaborador,
                       style: TextStyle(
-                        fontSize: 16, 
+                        fontSize: 16,
                         color: Color(0xFF059669), //Verde padrão do seu sistema
-                        fontWeight: FontWeight.w500
-                      ), 
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ],
                 ),
@@ -132,7 +133,7 @@ class _PerfilConsolidadoCard extends StatelessWidget {
           ),
 
           const SizedBox(height: 20),
-          
+
           //------------------------------------------------------------------
           //LINHA DIVISÓRIA
           //------------------------------------------------------------------
@@ -183,11 +184,11 @@ class _Informacoes extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     //VARIÁVEIS DE LÓGICA (Simulando os dados que virão da API)
-    String saldoHoras = "+2h 30m"; 
+    String saldoHoras = "+2h 30m";
     //Lógica simples: se o texto começar com "-", é negativo (vermelho).
-    bool isSaldoPositivo = !saldoHoras.startsWith("-"); 
+    bool isSaldoPositivo = !saldoHoras.startsWith("-");
     bool isSaldoNeutro = saldoHoras == "0h" || saldoHoras == "";
-    
+
     //Define a cor baseada no saldo
     Color corBancoHoras = const Color(0xFF0F172A); //Cor normal
     if (!isSaldoNeutro) {
@@ -198,16 +199,23 @@ class _Informacoes extends StatelessWidget {
     //TODO: Substituir a data fixa por uma variável que venha da API
     DateTime hoje = DateTime.now();
     DateTime dataAniversario = DateTime(1990, 5, 13);
-    bool isAniversarioHoje = (hoje.day == dataAniversario.day && hoje.month == dataAniversario.month);
+    bool isAniversarioHoje =
+        (hoje.day == dataAniversario.day &&
+        hoje.month == dataAniversario.month);
 
     //Muda o texto do aniversário se for o dia do aniversário
-    String textoAniversario = isAniversarioHoje 
-      ? "🎉${dataAniversario.day}/${dataAniversario.month}/${hoje.year}🎉" 
-      : "${dataAniversario.day}/${dataAniversario.month}/${hoje.year}";
+    String textoAniversario = isAniversarioHoje
+        ? "🎉${dataAniversario.day}/${dataAniversario.month}/${hoje.year}🎉"
+        : "${dataAniversario.day}/${dataAniversario.month}/${hoje.year}";
 
     return Column(
       children: [
-        _buildInfoRow('Banco de Horas', saldoHoras, valueColor: corBancoHoras, isBold: true),
+        _buildInfoRow(
+          'Banco de Horas',
+          saldoHoras,
+          valueColor: corBancoHoras,
+          isBold: true,
+        ),
         const SizedBox(height: 16),
         _buildInfoRow('Estado', 'TRABALHANDO', isBold: true),
         const SizedBox(height: 16),
@@ -219,15 +227,20 @@ class _Informacoes extends StatelessWidget {
   }
 
   //Função ajudante para desenhar cada linha (Texto Esquerdo ----- Texto Direito)
-  Widget _buildInfoRow(String label, String value, {Color? valueColor, bool isBold = false}) {
+  Widget _buildInfoRow(
+    String label,
+    String value, {
+    Color? valueColor,
+    bool isBold = false,
+  }) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: [
         SizedBox(
           width: 250,
           child: Text(
-            "$label:", 
-            style: const TextStyle(fontSize: 16, color: Color(0xFF475569))
+            "$label:",
+            style: const TextStyle(fontSize: 16, color: Color(0xFF475569)),
           ),
         ),
         Text(
@@ -251,14 +264,26 @@ class _MuralAvisos extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const List<String> avisosUrgentes = ['Falta de energia amanhã', 'Atualização do sistema de ponto'];
-    const List<String> avisosComunicados = ['Festa de fim de ano', 'Novos benefícios de saúde'];
-    const List<String> avisosMensagens = ['RH: Assinar documento pendente', 'TI: Atualizar senha', 'RH: Passar no RH'];
-    
+    const List<String> avisosUrgentes = [
+      'Falta de energia amanhã',
+      'Atualização do sistema de ponto',
+    ];
+    const List<String> avisosComunicados = [
+      'Festa de fim de ano',
+      'Novos benefícios de saúde',
+    ];
+    const List<String> avisosMensagens = [
+      'RH: Assinar documento pendente',
+      'TI: Atualizar senha',
+      'RH: Passar no RH',
+    ];
+
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(0xFFE2E8F0).withOpacity(0.5), //Fundo acinzentado/azulado bem claro
+        color: const Color(
+          0xFFE2E8F0,
+        ).withOpacity(0.5), //Fundo acinzentado/azulado bem claro
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Column(
@@ -268,28 +293,19 @@ class _MuralAvisos extends StatelessWidget {
             'MURAL DE AVISOS',
             textAlign: TextAlign.center,
             style: TextStyle(
-              fontSize: 24, 
-              fontWeight: FontWeight.bold, 
-              color: Color(0xFF0F172A)
+              fontSize: 24,
+              fontWeight: FontWeight.bold,
+              color: Color(0xFF0F172A),
             ),
           ),
           SizedBox(height: 16),
-          
+
           //ExpansionTile é o widget nativo do Flutter para listas que expandem ao clicar
-          _MuralExpansivel(
-            titulo: 'Urgente', 
-            itens: avisosUrgentes,
-          ),
+          _MuralExpansivel(titulo: 'Urgente', itens: avisosUrgentes),
           SizedBox(height: 8),
-          _MuralExpansivel(
-            titulo: 'Comunicados', 
-            itens: avisosComunicados
-          ),
+          _MuralExpansivel(titulo: 'Comunicados', itens: avisosComunicados),
           SizedBox(height: 8),
-          _MuralExpansivel(
-            titulo: 'Mensagens', 
-            itens: avisosMensagens
-          ),
+          _MuralExpansivel(titulo: 'Mensagens', itens: avisosMensagens),
         ],
       ),
     );
@@ -315,21 +331,29 @@ class _MuralExpansivel extends StatelessWidget {
       ),
       child: ExpansionTile(
         title: Text(
-          "$titulo (${itens.length})", 
-          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600)
+          "$titulo (${itens.length})",
+          style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
-        shape: const Border(), //Remove as linhas estranhas que o Flutter coloca por padrão
+        shape:
+            const Border(), //Remove as linhas estranhas que o Flutter coloca por padrão
         //Faz um loop na lista de itens (textos) e transforma em widgets de Padding com Text
-        children: itens.map((item) => Padding(
-          padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
-          child: Align(
-            alignment: Alignment.centerLeft,
-            child: Text(
-              '• $item', 
-              style: const TextStyle(color: Color(0xFF475569), fontSize: 13)
-            ),
-          ),
-        )).toList(),
+        children: itens
+            .map(
+              (item) => Padding(
+                padding: const EdgeInsets.only(left: 16, right: 16, bottom: 12),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    '• $item',
+                    style: const TextStyle(
+                      color: Color(0xFF475569),
+                      fontSize: 13,
+                    ),
+                  ),
+                ),
+              ),
+            )
+            .toList(),
       ),
     );
   }
