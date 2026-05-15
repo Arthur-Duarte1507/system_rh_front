@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../core/di/app_scope.dart';
+import '../core/network/api_exception.dart';
 import '../widgets/rh_home_page.dart';
 
 class LoginPage extends StatefulWidget {
@@ -10,36 +12,64 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
-  final usuarioController = TextEditingController();
+  final emailController = TextEditingController();
   final senhaController = TextEditingController();
 
   bool obscurePassword = true;
   bool loading = false;
 
   Future<void> fazerLogin() async {
+    final email = emailController.text.trim();
+    final senha = senhaController.text;
+
+    if (email.isEmpty || senha.isEmpty) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Informe email e senha')));
+      return;
+    }
+
+    FocusScope.of(context).unfocus();
+
     setState(() {
       loading = true;
     });
 
-    await Future.delayed(const Duration(seconds: 1));
+    try {
+      await context.services.pythonApi.post(
+        '/api/auth/login',
+        body: {'email': email, 'senha': senha},
+      );
 
-    // LOGIN TEMPORÁRIO
-    if (usuarioController.text == 'admin' && senhaController.text == '123') {
       if (!mounted) return;
-
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const RhHomePage()),
       );
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Usuário ou senha inválidos')),
-      );
+    } on ApiException catch (error) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(error.message)));
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('Falha ao realizar login')));
+    } finally {
+      if (mounted) {
+        setState(() {
+          loading = false;
+        });
+      }
     }
+  }
 
-    setState(() {
-      loading = false;
-    });
+  @override
+  void dispose() {
+    emailController.dispose();
+    senhaController.dispose();
+    super.dispose();
   }
 
   @override
@@ -177,10 +207,12 @@ class _LoginPageState extends State<LoginPage> {
                           const SizedBox(height: 34),
 
                           TextField(
-                            controller: usuarioController,
+                            controller: emailController,
+                            keyboardType: TextInputType.emailAddress,
+                            textInputAction: TextInputAction.next,
 
                             decoration: InputDecoration(
-                              labelText: 'Usuário',
+                              labelText: 'Email',
 
                               prefixIcon: const Icon(Icons.person_outline),
 
@@ -195,6 +227,12 @@ class _LoginPageState extends State<LoginPage> {
                           TextField(
                             controller: senhaController,
                             obscureText: obscurePassword,
+                            textInputAction: TextInputAction.done,
+                            onSubmitted: (_) {
+                              if (!loading) {
+                                fazerLogin();
+                              }
+                            },
 
                             decoration: InputDecoration(
                               labelText: 'Senha',
