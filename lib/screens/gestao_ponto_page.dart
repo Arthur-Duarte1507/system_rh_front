@@ -12,9 +12,9 @@ class GestaoPontoPage extends StatelessWidget {
       children: [
         const RhModuleHeader(
           icon: Icons.access_time_rounded,
-          title: 'Gestao de Ponto e Ajustes',
+          title: 'Gestão de Ponto e Ajustes',
           subtitle:
-              'Controle diario de horas, status de trabalho e justificativas.',
+              'Controle diário de horas, status de trabalho e justificativas.',
         ),
         const SizedBox(height: 16),
         const RhPageAssignmentBanner(
@@ -28,9 +28,9 @@ class GestaoPontoPage extends StatelessWidget {
               return const Column(
                 children: [
                   RhSectionCard(
-                    title: 'Ponto diario',
+                    title: 'Ponto diário',
                     description:
-                        'Area principal para acompanhar a jornada do dia em tempo real.',
+                        'Área principal para acompanhar a jornada do dia em tempo real.',
                     items: [
                       'Mostrar tempo trabalhado no dia',
                       'Botao de bater o ponto',

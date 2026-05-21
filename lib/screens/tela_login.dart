@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:sistema_rh/services/local_storage_service.dart';
 
 import '../core/di/app_scope.dart';
 import '../core/network/api_exception.dart';
@@ -36,11 +37,15 @@ class _LoginPageState extends State<LoginPage> {
     });
 
     try {
-      await context.services.pythonApi.post(
+      final response = await context.services.pythonApi.post(
         '/api/auth/login',
         body: {'email': email, 'senha': senha},
       );
-
+      //Salva o ID do funcionário para uso nas outras telas
+      final funcionarioId = response['usuario']['id'].toString();
+      await LocalStorageService().salvarFuncionarioId(funcionarioId);
+      //print(funcionarioId);
+      
       if (!mounted) return;
       Navigator.pushReplacement(
         context,
@@ -51,11 +56,11 @@ class _LoginPageState extends State<LoginPage> {
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(SnackBar(content: Text(error.message)));
-    } catch (_) {
+    } catch (e) {
       if (!mounted) return;
       ScaffoldMessenger.of(
         context,
-      ).showSnackBar(const SnackBar(content: Text('Falha ao realizar login')));
+      ).showSnackBar(const SnackBar(content: Text('Falha ao realizar login.')));
     } finally {
       if (mounted) {
         setState(() {

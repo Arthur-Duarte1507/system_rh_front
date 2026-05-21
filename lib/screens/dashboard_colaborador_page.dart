@@ -1,6 +1,21 @@
+/*
+============================
+A FAZER:
+- Mostrar a data das mensagens no mural
+- Mostrar em ordem de crescente de data (mais recente no topo)
+- Tempo limite para as mensagens
+  1- Urgente: É apagada após ser resolvido (somente o RH pode apagar)
+  2- Comunicados: Apagada após 30 dias ou data limite definida por quem postou
+- Pensar se o campo de mensagens será apagado do mural ou não.
+============================
+ */
+
 import 'package:flutter/material.dart';
+import 'package:sistema_rh/core/di/app_services.dart';
+import 'package:sistema_rh/core/utils/formatters.dart';
 import 'dart:math';
 import '../widgets/module_base_widgets.dart';
+import 'package:sistema_rh/services/local_storage_service.dart';
 
 class DashboardColaboradorPage extends StatelessWidget {
   const DashboardColaboradorPage({super.key});
@@ -24,189 +39,112 @@ class DashboardColaboradorPage extends StatelessWidget {
         ),
         const SizedBox(height: 16),
 
-        //Chamamos o nosso novo Card unificado aqui
+        //Chamamos o nosso novo Card genérico configurado para o dashboard
         const _PerfilConsolidadoCard(),
       ],
     );
   }
 }
 
+///Função utilitária para gerar a cor de fundo clara
 Color gerarCorClaraAleatoria() {
   final random = Random();
 
-  //Criamos uma cor baseada em HSL:
-  //Hue (Matiz): 0 a 360 (todas as cores do arco-íris)
-  //Saturation: 0.4 a 0.8 (para não ficar nem cinza, nem berrante)
-  //Lightness: 0.6 a 0.85 (GARANTE que a cor seja clara)
   return HSLColor.fromAHSL(
-    1.0,
-    random.nextDouble() * 360,
-    0.5 + random.nextDouble() * 0.2,
-    0.7 + random.nextDouble() * 0.15,
+    1.0, //Transparência
+    random.nextDouble() * 360, //Cor aleatória (0 a 360)
+    0.5 + random.nextDouble() * 0.2, //Saturação (evitar cor cinza ou muito berrante)
+    0.7 + random.nextDouble() * 0.15, //Luminosidade (clara)
   ).toColor();
 }
-
-//============================================================================
-//NOVO WIDGET: O Retângulo Principal que contém tudo
-//============================================================================
+//============================
+//COMPOSIÇÃO: Card de perfil
+//============================
 class _PerfilConsolidadoCard extends StatelessWidget {
   const _PerfilConsolidadoCard();
 
+  //Pega os dados do colaborador da API
+  Future<Map<String, dynamic>> obterDados() async {
+    final dado = await LocalStorageService().obterFuncionarioId();
+    final response = await AppServices.fromEnvironment().pythonApi.get('/api/dashboard/$dado');
+    return response ?? {};
+  }
+  
   @override
   Widget build(BuildContext context) {
-    const String nomeColaborador =
-        "Maria Silva"; //TODO: Substituir por variável da API
-    const String cargoColaborador =
-        "Engenheira de Software Sênior"; //TODO: Substituir por variável da API
     Color corFundo = gerarCorClaraAleatoria();
 
-    return Container(
-      width: double.infinity,
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(16),
-        border: Border.all(color: const Color(0xFFD9E1EB)),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000),
-            blurRadius: 14,
-            offset: Offset(0, 5),
+    return FutureBuilder<Map<String, dynamic>>(
+      future: obterDados(),
+      builder: (context, snapshot) {
+        //Se os dados ainda estão sendo carregados, mostra um ícone de loading
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(32.0),
+              child: CircularProgressIndicator(),
+            ),
+          );
+        }
+
+        //Caso de erro
+        if (snapshot.hasError) {
+          return const Center(child: Text("Erro ao carregar perfil."));
+        }
+
+        final Map<String, dynamic>? dados = snapshot.data;
+        final String nomeColaborador = dados!['funcionario']['nome'] ?? "Colaborador";
+        final String cargoColaborador = dados['funcionario']['cargo'] ?? "Cargo";
+        final String dataAniversario = dados['funcionario']['aniversario'];
+        final String tempoCasa = dados['funcionario']['tempo_casa'];
+        final String estado = dados['funcionario']['estado_trabalho'];
+        final String bancoHoras = dados['banco_horas']['saldo'];
+
+        return RhConsolidadoCard(
+          titulo: nomeColaborador,
+          subtitulo: cargoColaborador,
+          corFundoAvatar: corFundo,
+          avatar: nomeColaborador,
+          conteudoEsquerda: _Informacoes(
+            saldoHoras: bancoHoras,
+            dataAniversario: dataAniversario,
+            tempoCasa: tempoCasa,
+            estado: estado,
           ),
-        ],
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          //------------------------------------------------------------------
-          //PARTE SUPERIOR: FOTO, NOME E CARGO (Acima da linha divisória)
-          //------------------------------------------------------------------
-          Row(
-            children: [
-              //Retângulo da foto do colaborador
-              Container(
-                width: 70,
-                height: 70,
-                decoration: BoxDecoration(
-                  color: corFundo,
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFF000000)),
-                ),
-                child: Center(
-                  child: Text(
-                    nomeColaborador.split(' ').map((n) => n[0]).take(2).join(),
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Color(0xFF0F172A),
-                    ),
-                  ),
-                ),
-              ),
-              const SizedBox(width: 16),
-
-              //Textos: Nome e Cargo
-              const Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      nomeColaborador,
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                        color: Color(0xFF0F172A),
-                      ),
-                    ),
-                    Text(
-                      cargoColaborador,
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Color(0xFF059669), //Verde padrão do seu sistema
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          //------------------------------------------------------------------
-          //LINHA DIVISÓRIA
-          //------------------------------------------------------------------
-          const Divider(color: Color(0xFFD9E1EB), thickness: 1),
-          const SizedBox(height: 20),
-
-          //------------------------------------------------------------------
-          //PARTE INFERIOR: DADOS DA ESQUERDA E MURAL DA DIREITA
-          //------------------------------------------------------------------
-          //Usamos LayoutBuilder igual ao Qt dinâmico: se a tela for pequena,
-          //empilhamos as informações (Column). Se for grande, ficam lado a lado (Row).
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isCompact = constraints.maxWidth < 800;
-
-              if (isCompact) {
-                return const Column(
-                  children: [
-                    _Informacoes(),
-                    SizedBox(height: 24),
-                    _MuralAvisos(),
-                  ],
-                );
-              }
-
-              return const Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(flex: 1, child: _Informacoes()),
-                  SizedBox(width: 40), //Espaço entre as duas colunas
-                  Expanded(flex: 1, child: _MuralAvisos()),
-                ],
-              );
-            },
-          ),
-        ],
-      ),
+          conteudoDireita: const _MuralAvisos(),
+        );
+      },
     );
   }
 }
 
 //============================================================================
-//WIDGET INTERNO: Lado Esquerdo (Informações do Trabalhador)
+//WIDGET INTERNO: Informações do Trabalhador
 //============================================================================
 class _Informacoes extends StatelessWidget {
-  const _Informacoes();
+  final String saldoHoras;
+  final String dataAniversario;
+  final String tempoCasa;
+  final String estado;
+  
+  const _Informacoes({
+    required this.saldoHoras,
+    required this.dataAniversario,
+    required this.tempoCasa,
+    required this.estado
+  });
 
   @override
   Widget build(BuildContext context) {
-    //VARIÁVEIS DE LÓGICA (Simulando os dados que virão da API)
-    String saldoHoras = "+2h 30m";
-    //Lógica simples: se o texto começar com "-", é negativo (vermelho).
     bool isSaldoPositivo = !saldoHoras.startsWith("-");
     bool isSaldoNeutro = saldoHoras == "0h" || saldoHoras == "";
 
-    //Define a cor baseada no saldo
-    Color corBancoHoras = const Color(0xFF0F172A); //Cor normal
+    Color corBancoHoras = const Color(0xFF0F172A);
     if (!isSaldoNeutro) {
       corBancoHoras = isSaldoPositivo ? const Color(0xFF059669) : Colors.red;
     }
 
-    //Verifica se o aniversário é hoje
-    //TODO: Substituir a data fixa por uma variável que venha da API
-    DateTime hoje = DateTime.now();
-    DateTime dataAniversario = DateTime(1990, 5, 13);
-    bool isAniversarioHoje =
-        (hoje.day == dataAniversario.day &&
-        hoje.month == dataAniversario.month);
-
-    //Muda o texto do aniversário se for o dia do aniversário
-    String textoAniversario = isAniversarioHoje
-        ? "🎉${dataAniversario.day}/${dataAniversario.month}/${hoje.year}🎉"
-        : "${dataAniversario.day}/${dataAniversario.month}/${hoje.year}";
+    String textoAniversario = formatarAniversario(formatarData(dataAniversario));
 
     return Column(
       children: [
@@ -217,16 +155,15 @@ class _Informacoes extends StatelessWidget {
           isBold: true,
         ),
         const SizedBox(height: 16),
-        _buildInfoRow('Estado', 'TRABALHANDO', isBold: true),
+        _buildInfoRow('Estado', estado, isBold: true),
         const SizedBox(height: 16),
         _buildInfoRow('Aniversário', textoAniversario),
         const SizedBox(height: 16),
-        _buildInfoRow('Tempo de casa', '3 anos e 2 meses'),
+        _buildInfoRow('Tempo de casa', tempoCasa),
       ],
     );
   }
 
-  //Função ajudante para desenhar cada linha (Texto Esquerdo ----- Texto Direito)
   Widget _buildInfoRow(
     String label,
     String value, {
@@ -257,7 +194,7 @@ class _Informacoes extends StatelessWidget {
 }
 
 //============================================================================
-//WIDGET INTERNO: Lado Direito (Mural de Avisos)
+//WIDGET INTERNO: Mural de Avisos
 //============================================================================
 class _MuralAvisos extends StatelessWidget {
   const _MuralAvisos();
@@ -281,9 +218,7 @@ class _MuralAvisos extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: const Color(
-          0xFFE2E8F0,
-        ).withOpacity(0.5), //Fundo acinzentado/azulado bem claro
+        color: const Color.fromARGB(129, 226, 232, 240),
         borderRadius: BorderRadius.circular(12),
       ),
       child: const Column(
@@ -299,8 +234,6 @@ class _MuralAvisos extends StatelessWidget {
             ),
           ),
           SizedBox(height: 16),
-
-          //ExpansionTile é o widget nativo do Flutter para listas que expandem ao clicar
           _MuralExpansivel(titulo: 'Urgente', itens: avisosUrgentes),
           SizedBox(height: 8),
           _MuralExpansivel(titulo: 'Comunicados', itens: avisosComunicados),
@@ -334,9 +267,7 @@ class _MuralExpansivel extends StatelessWidget {
           "$titulo (${itens.length})",
           style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
         ),
-        shape:
-            const Border(), //Remove as linhas estranhas que o Flutter coloca por padrão
-        //Faz um loop na lista de itens (textos) e transforma em widgets de Padding com Text
+        shape: const Border(),
         children: itens
             .map(
               (item) => Padding(

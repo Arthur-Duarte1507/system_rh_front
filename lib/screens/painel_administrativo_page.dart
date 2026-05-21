@@ -163,7 +163,7 @@ class _PainelAdministrativoPageState extends State<PainelAdministrativoPage> {
         const RhModuleHeader(
           icon: Icons.admin_panel_settings_outlined,
           title: 'Painel Administrativo',
-          subtitle: 'Relatorios, lista de funcionarios e contatos internos.',
+          subtitle: 'Relatorios, lista de funcionários e contatos internos.',
         ),
 
         const SizedBox(height: 16),
@@ -257,7 +257,7 @@ class _PainelAdministrativoPageState extends State<PainelAdministrativoPage> {
           const SizedBox(height: 12),
 
           DropdownButtonFormField<String>(
-            value: statusNovoFuncionario,
+            initialValue: statusNovoFuncionario,
             decoration: const InputDecoration(
               labelText: 'Status',
               border: OutlineInputBorder(),

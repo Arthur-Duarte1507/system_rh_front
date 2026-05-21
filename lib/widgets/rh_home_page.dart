@@ -32,20 +32,20 @@ class _RhHomePageState extends State<RhHomePage> {
     ),
     _ModuleDefinition(
       module: RhModule.gestaoPonto,
-      title: 'Gestao de Ponto e Ajustes',
-      subtitle: 'Jornada diaria e justificativas',
+      title: 'Gestão de Ponto e Ajustes',
+      subtitle: 'Jornada diária e justificativas',
       icon: Icons.access_time_rounded,
     ),
     _ModuleDefinition(
       module: RhModule.painelAdministrativo,
       title: 'Painel Administrativo',
-      subtitle: 'Relatorios + lista de contatos',
+      subtitle: 'Relatórios + lista de contatos',
       icon: Icons.admin_panel_settings_outlined,
     ),
     _ModuleDefinition(
       module: RhModule.gestaoFerias,
-      title: 'Gestao de Ferias',
-      subtitle: 'Solicitacoes e historico',
+      title: 'Gestão de Férias',
+      subtitle: 'Solicitações e histórico',
       icon: Icons.beach_access_rounded,
     ),
   ];

@@ -58,7 +58,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
     if (inicio == null || fim == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Data invalida ou inexistente (use dd/MM/yyyy)'),
+          content: Text('Data inválida ou inexistente (use dd/MM/yyyy)'),
         ),
       );
       return;
@@ -68,7 +68,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
     if (inicio.isAfter(fim)) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Data inicio nao pode ser maior que a data fim'),
+          content: Text('Data início não pode ser maior que a data fim'),
         ),
       );
       return;
@@ -79,7 +79,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
     // 3. valida saldo
     if (diasSolicitados > saldoDias) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Saldo insuficiente de ferias')),
+        const SnackBar(content: Text('Saldo insuficiente de férias')),
       );
       return;
     }
@@ -88,13 +88,13 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
       saldoDias -= diasSolicitados;
 
       historicoFerias.insert(0, {
-        'periodo': '$inicioTexto - $fimTexto',
-        'status': 'Em analise',
+        'período': '$inicioTexto - $fimTexto',
+        'status': 'Em análise',
       });
     });
 
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text('Solicitacao enviada ($diasSolicitados dias)')),
+      SnackBar(content: Text('Solicitação enviada ($diasSolicitados dias)')),
     );
 
     inicioController.clear();
@@ -115,9 +115,9 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
       children: [
         const RhModuleHeader(
           icon: Icons.beach_access_rounded,
-          title: 'Gestao de Ferias',
+          title: 'Gestão de Férias',
           subtitle:
-              'Planejamento, solicitacoes e historico de periodos de ferias.',
+              'Planejamento, solicitações e histórico de períodos de férias.',
         ),
 
         const SizedBox(height: 16),
@@ -177,7 +177,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Resumo e solicitacao',
+            'Resumo e solicitação',
             style: TextStyle(
               color: Color(0xFF0F172A),
               fontSize: 24,
@@ -188,7 +188,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
           const SizedBox(height: 8),
 
           const Text(
-            'Area de saldo de dias, solicitacao e status de aprovacao.',
+            'Área de saldo de dias, solicitação e status de aprovação.',
             style: TextStyle(
               color: Color(0xFF475569),
               fontSize: 15,
@@ -211,7 +211,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
                 const Icon(Icons.beach_access),
                 const SizedBox(width: 10),
                 Text(
-                  '$saldoDias dias disponiveis',
+                  '$saldoDias dias disponíveis',
                   style: const TextStyle(
                     fontSize: 17,
                     fontWeight: FontWeight.bold,
@@ -226,7 +226,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
           TextField(
             controller: inicioController,
             decoration: const InputDecoration(
-              labelText: 'Data de inicio (dd/MM/yyyy)',
+              labelText: 'Data de início (dd/MM/yyyy)',
               border: OutlineInputBorder(),
               prefixIcon: Icon(Icons.calendar_today),
             ),
@@ -251,7 +251,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
             child: ElevatedButton.icon(
               onPressed: solicitarFerias,
               icon: const Icon(Icons.send),
-              label: const Text('Solicitar Ferias'),
+              label: const Text('Solicitar Férias'),
             ),
           ),
         ],
@@ -279,7 +279,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            'Historico e calendario',
+            'Histórico e calendário',
             style: TextStyle(
               color: Color(0xFF0F172A),
               fontSize: 24,
@@ -290,7 +290,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
           const SizedBox(height: 8),
 
           const Text(
-            'Consulta de periodos ja utilizados e previsao dos proximos.',
+            'Consulta de períodos já utilizados e previsão dos próximos.',
             style: TextStyle(
               color: Color(0xFF475569),
               fontSize: 15,
@@ -302,7 +302,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
           const SizedBox(height: 20),
 
           const Text(
-            'Historico de Ferias',
+            'Histórico de Férias',
             style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
           ),
 
@@ -353,7 +353,7 @@ class _GestaoFeriasPageState extends State<GestaoFeriasPage> {
                 SizedBox(width: 10),
                 Expanded(
                   child: Text(
-                    'Bloqueio de solicitacoes entre 20/12 e 05/01 devido ao fechamento anual.',
+                    'Bloqueio de solicitações entre 20/12 e 05/01 devido ao fechamento anual.',
                   ),
                 ),
               ],
