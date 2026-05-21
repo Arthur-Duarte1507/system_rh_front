@@ -76,7 +76,9 @@ class _RhHomePageState extends State<RhHomePage> {
             child: Column(
               children: [
                 _buildTopBar(),
-                Expanded(child: _buildMainContent()),
+                Expanded(
+                  child: _buildMainContent(),
+                ), // Ocupa o espaço restante perfeitamente
               ],
             ),
           ),
@@ -123,55 +125,43 @@ class _RhHomePageState extends State<RhHomePage> {
   Widget _buildSidebarContent({required bool isDrawer}) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-
       children: [
         Padding(
           padding: const EdgeInsets.fromLTRB(16, 16, 16, 14),
-
           child: Row(
             children: [
               Container(
                 height: 38,
                 width: 38,
-
                 decoration: BoxDecoration(
                   color: const Color(0xFF059669),
                   borderRadius: BorderRadius.circular(12),
                 ),
-
                 child: const Icon(
                   Icons.people_alt_outlined,
                   color: Colors.white,
                   size: 22,
                 ),
               ),
-
               const SizedBox(width: 10),
-
               const Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-
                   children: [
                     Text(
                       'Sistema de RH',
-
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-
                       style: TextStyle(
                         color: Color(0xFF0F172A),
                         fontSize: 19,
                         fontWeight: FontWeight.w700,
                       ),
                     ),
-
                     Text(
                       'Base do frontend',
-
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
-
                       style: TextStyle(
                         color: Color(0xFF64748B),
                         fontSize: 12,
@@ -184,15 +174,11 @@ class _RhHomePageState extends State<RhHomePage> {
             ],
           ),
         ),
-
         const Divider(height: 1, color: Color(0xFFE2E8F0)),
-
         const Padding(
           padding: EdgeInsets.fromLTRB(16, 18, 16, 6),
-
           child: Text(
             'Modulos principais',
-
             style: TextStyle(
               color: Color(0xFF334155),
               fontSize: 14,
@@ -200,83 +186,59 @@ class _RhHomePageState extends State<RhHomePage> {
             ),
           ),
         ),
-
         Expanded(
           child: ListView.builder(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-
             itemCount: _modules.length,
-
             itemBuilder: (context, index) {
               final module = _modules[index];
-
               final isSelected = _selectedModule == module.module;
 
               return Padding(
                 padding: const EdgeInsets.symmetric(vertical: 4),
-
                 child: InkWell(
                   borderRadius: BorderRadius.circular(12),
-
                   onTap: () => _onSelectModule(module.module, isDrawer),
-
                   child: AnimatedContainer(
                     duration: const Duration(milliseconds: 150),
-
                     curve: Curves.easeOut,
-
                     padding: const EdgeInsets.all(12),
-
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
-
                       color: isSelected
                           ? const Color(0xFFE6EDF6)
                           : Colors.transparent,
                     ),
-
                     child: Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
-
                       children: [
                         Icon(
                           module.icon,
-
                           color: isSelected
                               ? const Color(0xFF0F172A)
                               : const Color(0xFF475569),
-
                           size: 20,
                         ),
-
                         const SizedBox(width: 10),
-
                         Expanded(
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
-
                             children: [
                               Text(
                                 module.title,
-
                                 style: TextStyle(
                                   color: isSelected
                                       ? const Color(0xFF0F172A)
                                       : const Color(0xFF1E293B),
-
                                   fontSize: 15,
-
                                   fontWeight: isSelected
                                       ? FontWeight.w700
                                       : FontWeight.w600,
                                 ),
                               ),
-
                               const SizedBox(height: 2),
-
                               Text(
                                 module.subtitle,
-
                                 style: const TextStyle(
                                   color: Color(0xFF64748B),
                                   fontSize: 12,
@@ -294,44 +256,30 @@ class _RhHomePageState extends State<RhHomePage> {
             },
           ),
         ),
-
-        // BOTÃO LOGOUT
         const Divider(height: 1, color: Color(0xFFE2E8F0)),
-
         Padding(
           padding: const EdgeInsets.all(12),
-
           child: InkWell(
             borderRadius: BorderRadius.circular(12),
-
             onTap: () {
               Navigator.pushAndRemoveUntil(
                 context,
-
                 MaterialPageRoute(builder: (_) => const LoginPage()),
-
                 (route) => false,
               );
             },
-
             child: Container(
               padding: const EdgeInsets.all(14),
-
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(12),
-
                 color: Colors.red.withOpacity(0.06),
               ),
-
               child: const Row(
                 children: [
                   Icon(Icons.logout_rounded, color: Colors.red, size: 20),
-
                   SizedBox(width: 12),
-
                   Text(
                     'Sair',
-
                     style: TextStyle(
                       color: Colors.red,
                       fontSize: 15,
@@ -373,8 +321,9 @@ class _RhHomePageState extends State<RhHomePage> {
     );
   }
 
+  // MODIFICADO: Removemos o SingleChildScrollView global perigoso daqui
   Widget _buildMainContent() {
-    return SingleChildScrollView(
+    return Padding(
       padding: const EdgeInsets.fromLTRB(22, 22, 22, 28),
       child: Align(
         alignment: Alignment.topCenter,
@@ -393,6 +342,7 @@ class _RhHomePageState extends State<RhHomePage> {
       case RhModule.gestaoPonto:
         return const GestaoPontoPage();
       case RhModule.painelAdministrativo:
+        // Agora o Painel pode calcular o seu tamanho e gerenciar o próprio scroll interno se necessário
         return const PainelAdministrativoPage();
       case RhModule.gestaoFerias:
         return const GestaoFeriasPage();

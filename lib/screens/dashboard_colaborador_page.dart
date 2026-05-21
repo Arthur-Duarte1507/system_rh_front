@@ -159,7 +159,7 @@ class _Informacoes extends StatelessWidget {
         const SizedBox(height: 16),
         _buildInfoRow('Aniversário', textoAniversario),
         const SizedBox(height: 16),
-        _buildInfoRow('Tempo de casa', tempoCasa),
+        _buildInfoRow('Tempo de casa', tempoCasa == "" ? "0" : tempoCasa),
       ],
     );
   }
